@@ -4,6 +4,11 @@
 - Custom generators can be specified via a yaml config file
 - Almost all of [Faker's generators](https://faker.readthedocs.io/en/master/providers/baseprovider.html) can be used
 
+# Installation
+```
+pip install https://github.com/premkumr/pgdummy/releases/download/v0.3/pgdummy-0.2-py3-none-any.whl
+```
+
 # Usage
 - For a given schema file, first generate the config file
 - Modify the config file to setup customized generators
