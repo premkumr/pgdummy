@@ -1,0 +1,17 @@
+tables:
+    pilot:
+        id:
+            generator: sequence
+            start: 1
+            step: 3
+        name:
+            generator: first_name
+        code:
+            generator: foreign
+            key: airport.code
+    airport:
+        name:
+            generator: string
+        code:
+            generator: oneof
+            items: ['SFO','MAA', 'SAN', 'BWI']
