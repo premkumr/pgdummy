@@ -9,7 +9,7 @@ from faker import Faker
 from . import helpers
 from .helpers import debugprint, eprint
 from .providers import (DistinctGenerator, SequenceGenerator, SimpleProvider,
-                        UniqueGenerator)
+                        UniqueGenerator, get_default_generator)
 
 
 class Config:
@@ -48,7 +48,6 @@ class Config:
 
         if coldata['generator'] == 'sequence':
             fn = SequenceGenerator(**args).next
-            self.genmap[key] = fn.next
         else:
             # check for Distinct
             fn=partial(fn, **args)
@@ -106,6 +105,13 @@ class Config:
         key = helpers.COL_MAP_KEY_FMT.format(tablename, columnname)
         return self.colmap.get(key, None)
 
+    def get_table(self, tablename):
+        for table in self.data['tables']:
+            if table['name'] == tablename:
+                return table
+
+        return None
+
     def load(self, filename):
         if not os.path.exists(filename):
             eprint('config file NOT FOUND : {}'.format(filename))
@@ -118,7 +124,6 @@ class Config:
     def store(self, filename=None, minimal=True):
         # change the structure
         data = {'tables': {}}
-        print(3)
         for table in self.data['tables']:
             t = {}
             for column in table['columns']:
@@ -147,6 +152,9 @@ class Config:
             # find table in the conf
             if table['name'] in newdata['tables']:
                 newtable = newdata['tables'][table['name']]
+                if '__numrows' in newtable:
+                    table['numrows'] = newtable['__numrows']
+
                 for column in table['columns']:
                     # find table in conf
                     if column['name'] in newtable:
@@ -154,72 +162,18 @@ class Config:
                         for k,v in newcolumn.items():
                             if k not in self.SYS_KEYS:
                                 column[k] = v
+                if '__unique' in newtable:
+                    for unique in newtable['__unique']:
+                        debugprint(unique)
+                        if type(unique) == list:
+                            table['unique'].append(unique)
+                        else:
+                            table['unique'].append([a.strip() for a in unique.split(',')])
 
         # setup the generators ..
         debugprint('final config')
         debugprint(json.dumps(self.data, indent=4))
         self.validate(force=True)
-            
-    def get_default_generator(self, column):
-        g = {}
-        if column.typename in ['smallserial','serial','bigserial']:
-            g['generator'] = 'sequence'
-            g['start'] = 1
-            g['step'] = 1  
-        elif column.typename in ['bigint','int8']:
-            g['generator'] = 'integer'
-            g['max'] = 1000000
-            
-        elif column.typename in ['int','int4']:
-            g['generator'] = 'integer'
-            g['max'] = 1000
-            
-        elif column.typename in ['real','float4','float8','double precision']:
-            g['generator'] = 'decimal'
-            g['max'] = 10000
-            g['precision'] = 4
-            
-        elif column.typename in ['numeric', 'decimal']:
-            g['generator'] = 'decimal'
-            g['max'] = 100
-            if column.charlen > 0:
-                g['maxdigits'] = column.charlen
-            if column.charlen2 > 0:
-                g['precision'] = column.charlen2
-            
-        elif column.typename in ['bpchar', 'varchar']:
-            g['generator'] = 'string'
-            l = 5 if column.charlen <= 0 else column.charlen
-            g['max'] = l 
-            g['min'] = l            
-            
-        elif column.typename in ['char']:
-            g['generator'] = 'string'
-            l = 1 if column.charlen <= 0 else column.charlen
-            g['max'] = l 
-            g['min'] = l
-            
-        elif column.typename in ['timestamp','timestamptz']:
-           g['generator'] = 'timestamp'
-           g['start'] = '-30d'
-           g['end'] = 'now'
-           g['format'] = '%Y-%m-%d %H:%M:%S'
-
-        elif column.typename in ['bool']:
-           g['generator'] = 'boolean'
-
-        elif column.typename in ['uuid']:
-           g['generator'] = 'uuid4'
-
-        elif column.typename in ['text']:
-           g['generator'] = 'string'
-           g['max'] = 8
-           g['min'] = 8
-          
-        else:
-            eprint(' -->>> UNKNOWN TYPE: {} '.format(column.typename))
-        
-        return g
 
     def get_safe_order(self):
         graph = {}
@@ -266,7 +220,8 @@ class Config:
             t = {
                 'name' : table.name,
                 'schema' : table.schema,
-                'columns' : []
+                'columns' : [],
+                'unique' : []
             }
             self.data['tables'].append(t)
             
@@ -285,7 +240,9 @@ class Config:
                 self.colmap[key] = c
             # check if generator has been set
             if 'generator' not in c or len(c['generator']) == 0:
-                c.update(self.get_default_generator(column))
+                c.update(get_default_generator(column))
             # add to generator map
             #self.__add_to_genmap(table.name, c)
+
+        t['unique'] = table.unique_constraints
 

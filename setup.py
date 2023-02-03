@@ -2,7 +2,7 @@ from gettext import install
 from setuptools import setup 
 setup( 
     name='pgdummy', 
-    version='0.3', 
+    version='0.4', 
     author='Prem',
     author_email='contactprem@gmail.com',
     license='MIT',
