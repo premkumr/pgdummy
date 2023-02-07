@@ -80,7 +80,7 @@ class Table:
             l.append('Foreign Constraints')
             l.append('-------------------')
             for fk in self.foreignkey_constraints:
-                s= '{} references {}({})'.format(fk['columns'], fk['reftable'], fk['refcolums'])
+                s= '{} references {}({})'.format(fk['columns'], fk['reftable'], fk['refcolumns'])
                 l.append(s)
             l.append('')
             
