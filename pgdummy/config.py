@@ -83,7 +83,15 @@ class Config:
         for key in foreigns:
             tn,cn = key.split('.')
             column = self.get_column(tn, cn)
-            if not column : raise Exception('invalid foreign key spec [{}]'.format(key))
+            if not column :
+                table = self.get_table(tn)
+                msg = ''
+                if table is None:
+                    msg = 'table:{}'.format(tn)
+                else:
+                    msg = 'column:{} of table:{}'.format(cn, tn)
+
+                raise Exception('invalid foreign key spec [{}], {} - NOT FOUND'.format(key, msg))
             column['is_foreignkey'] = True
 
         # check for circular dependencies ..
