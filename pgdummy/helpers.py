@@ -12,6 +12,8 @@ def debugprint(*args, **kwargs):
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
+def set_seed(seed):
+    Faker.seed(seed)
 
 class Cache:
     def __init__(self):
