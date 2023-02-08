@@ -124,7 +124,7 @@ def get_default_generator(column):
         g['generator'] = 'integer'
         g['max'] = 1000000
 
-    elif column.typename in ['int', 'int2', 'int4', 'money']:
+    elif column.typename in ['int', 'int2', 'int4', 'money','smallint']:
         g['generator'] = 'integer'
         g['max'] = 1000
 
@@ -144,12 +144,14 @@ def get_default_generator(column):
     elif column.typename in ['bpchar', 'varchar']:
         g['generator'] = 'string'
         l = 5 if column.charlen <= 0 else column.charlen
+        l = min(l, 10)
         g['max'] = l
         g['min'] = l
 
     elif column.typename in ['char', 'character', 'character varying']:
         g['generator'] = 'string'
         l = 1 if column.charlen <= 0 else column.charlen
+        l = min(l, 10)
         g['max'] = l
         g['min'] = l
 
@@ -201,8 +203,7 @@ def get_default_generator(column):
         g['generator'] = 'uuid4'
 
     elif column.typename in ['bytea']:
-        g['generator'] = 'hex'
-        g['pattern'] = '\\' + 'x^^^^^'
+        g['generator'] = 'alphanumeric'
 
     elif column.typename in ['bit']:
         g['generator'] = 'string'
