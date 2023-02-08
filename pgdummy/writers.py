@@ -1,4 +1,4 @@
-
+from .sqlparser import safe_name
 
 class Writer:
     def __init__(self):
@@ -19,10 +19,13 @@ class InsertWriter(Writer):
         self.tablename = None
         self.sqlt = []
     
-    def table(self, tablename, column_names):
+    def table(self, tablename, _columns):
+        # check for quoting
+        columns = [safe_name(c) for c in _columns]
+
         self.sqlt = []
         self.sqlt.append('INSERT INTO {} ('.format(tablename))
-        self.sqlt.append(','.join(column_names))
+        self.sqlt.append(','.join(columns))
         self.sqlt.append(') VALUES({});')
 
         self.sqlt = ' '.join(self.sqlt)
@@ -66,11 +69,14 @@ SET row_security = off;
 
         """)
     
-    def table(self, tablename, column_names):
+    def table(self, tablename, _columns):
         self.printHeader()
+        # check for quoting
+        columns = [safe_name(c) for c in _columns]
+
         self.sqlt = []
         self.sqlt.append('COPY {} ('.format(tablename))
-        self.sqlt.append(','.join(column_names))
+        self.sqlt.append(','.join(columns))
         self.sqlt.append(') FROM stdin;')
 
         self.sqlt = ' '.join(self.sqlt)
