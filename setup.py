@@ -1,8 +1,7 @@
-from gettext import install
 from setuptools import setup 
 setup( 
     name='pgdummy', 
-    version='0.4.1', 
+    version='0.5.0',
     author='Prem',
     author_email='contactprem@gmail.com',
     license='MIT',
