@@ -97,7 +97,29 @@ HHUKNJLW	YET
 - foreign key dependencies can be specified here
 - First the foreign key columns are generated and from those values, the current column is filled.
 - mandatory option `key` is of the format `table.column`
-- 
+
+## uuid4
+-  Generates a v4 uuid eg : `cf2f7df8-ed52-4b2e-aee4-7e4aab21c051`
+
+## ip address (ipv4/ipv6)
+- `generator: ipv4` eg. `69.129.78.81`
+- `generator: ipv6` eg. `648a:664c:51d3:da:b9c0:139a:579:ef2f` 
+
+## cidr blocks
+-  same as ip addresses with option `network : True`
+-  eg. `208.237.0.0/16 , 54fb:7e8e::/32`
+
+## Other Generators from Faker
+- `first_name` - eg. `Alyssa,Phillip,Melanie`
+- `last_name` - eg. `Moody,Moore,Williams`
+- `name` - eg. `Jennifer Fowler, Malik Holt, Douglas Walters`
+- `zipcode` - eg. `94085,72280,53792`
+- `city` - eg. `Juanfurt, Debrastad, Gabrielfort`
+- `year` - eg. `1977,1984,2022`
+- `text` - eg. `Provide debate suggest treat least doctor quality. Fear color example increase`
+- `word` - eg. `process,space,building`
+- `country` - eg. `Denmark`
+
 ### Special options
 ## distinct
 - add this option to any generator to restrict the no.of unique items generated
@@ -106,6 +128,16 @@ HHUKNJLW	YET
 ## unique
 - When `unique : true` is set, then all elements generated will be unique.
 
+### Unique constraints (Multi-Column)
+## __unique
+- This table level section of lists to specify uniqueness of a set of columns.
+- specified as a list or comma(,) separated columns eg. 
+    __unique:
+        -   [col1, col2, col3]
+        -   col1, col2, col3
 
-
+### Other settings
+## __numrows
+- Table level setting to restrict the no.of rows generated for a table (overrides cmd-line)
+- specifying `__numrows : 10`, generates just `10` rows for that table
 
