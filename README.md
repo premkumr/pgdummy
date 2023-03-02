@@ -6,7 +6,7 @@
 
 # Installation
 ```
-pip install https://github.com/premkumr/pgdummy/releases/download/v0.5.0/pgdummy-0.5.0-py3-none-any.whl
+pip install https://github.com/premkumr/pgdummy/releases/download/v0.5.1/pgdummy-0.5.1-py3-none-any.whl
 ```
 
 # Usage

@@ -1,14 +1,14 @@
 from setuptools import setup 
 setup( 
     name='pgdummy', 
-    version='0.5.0',
+    version='0.5.1',
     author='Prem',
     author_email='contactprem@gmail.com',
     license='MIT',
     packages=['pgdummy'],
     python_requires=">=3.0",
     install_requires = [
-        'pglast >=3.1',
+        'pglast >=3.1, <4.0',
         'pyyaml >=6.0',
         'faker >=15.0',
     ],
