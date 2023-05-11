@@ -132,7 +132,10 @@ def parse(sql):
             table = Table()
             table.name = st.relation.relname
             table.schema = st.relation.schemaname
-    
+            if st.tableElts is None:
+                debugprint('not processing : {}.{}'.format(table.schema, table.name))
+                continue
+
             for col in st.tableElts:
                 if type(col) == pglast.ast.Constraint:
                     # check for primary key

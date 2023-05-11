@@ -1,7 +1,7 @@
 from setuptools import setup 
 setup( 
     name='pgdummy', 
-    version='0.5.2',
+    version='0.5.3',
     author='Prem',
     author_email='contactprem@gmail.com',
     license='MIT',
